@@ -1,0 +1,80 @@
+<html>
+    <head>
+        <title>Node Tutorials</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+    </head>
+    <body>
+        <div class="container" style="margin-top: 10px;">
+            <div class="row justify-row-content">
+                <div class="col-md-8 offset-md-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="display-5" align="center">Chat Application</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label><b>Sender Name :</b></label>
+                                <input type="text" name="senderName" id="senderName" class="form-control" placeholder="Enter your Name" />
+                            </div>
+                            <div class="form-group">
+                                <label><b>Message : </b></label>
+                                <input type="text" name="message" id="message" placeholder="Enter message to be send..." class="form-control" />
+                            </div>
+                            <div align="center">
+                                <button class="btn btn-success" id="send">Send</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br/>
+                <div class="col-md-8 offset-md-2" id="message-history" style="margin-top: 10px;">
+
+                </div>
+            </div>
+        </div>
+        
+        <script type="text/javascript">
+            var socket = io();
+            let url = 'http://localhost:3000';
+            getMessages();
+
+            function addMessages(message) {
+                $('#message-history').append(`<h5>${message.name}</h5> <p>${message.message}</p>`);
+            }
+
+            function getMessages() {
+                $.get(url + '/messages', (data) => {
+                    data.forEach(element => {
+                        addMessages(element);
+                    });
+                });
+            }
+
+            function postMessages(message) {
+                console.log("Inside postMessages :", message);
+                $.post(url + '/messages', message, (data) => {
+                    console.log(data);
+                    getMessages();
+                });                
+            }
+
+            socket.on('message', addMessages)
+
+            $(document).ready(function() {
+                $(document).on('click', '#send', () => {
+                    let data = {};
+                    data.name = $('#senderName').val();
+                    data.message = $('#message').val();
+                    console.log(data);
+                    postMessages(data);
+                });
+            });
+        </script>
+    </body>
+</html>
