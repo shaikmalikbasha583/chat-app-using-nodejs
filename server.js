@@ -1,8 +1,8 @@
-var express = require('express');
-var bodyParser = require('body-parser');
-var app = express();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
+const express = require('express');
+const bodyParser = require('body-parser');
+const app = express();
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
 
 let httpPort = 3000;
 let messages = [];
